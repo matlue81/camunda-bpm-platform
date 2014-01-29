@@ -33,6 +33,7 @@ import org.camunda.bpm.engine.impl.db.DbSqlSession;
 import org.camunda.bpm.engine.impl.db.HasRevision;
 import org.camunda.bpm.engine.impl.db.PersistentObject;
 import org.camunda.bpm.engine.impl.delegate.TaskListenerInvocation;
+import org.camunda.bpm.engine.impl.history.event.HistoricTaskDetailEventEntity;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.interceptor.CommandContextCloseListener;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
@@ -114,6 +115,12 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
       execution.addTask(this);
     }
 
+    // create task history detail
+    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
+    entityHTD.setOperationType("insert");
+    entityHTD.setUserId("icke");
+    entityHTD.setTimeStamp(new Date());
+    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   public void update() {
@@ -124,6 +131,13 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     dbSqlSession.update(this);
 
     commandContext.registerCommandContextCloseListener(this);
+
+    // update task history detail
+    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
+    entityHTD.setOperationType("update");
+    entityHTD.setUserId("icke");
+    entityHTD.setTimeStamp(new Date());
+    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   /** new task.  Embedded state and create time will be initialized.
