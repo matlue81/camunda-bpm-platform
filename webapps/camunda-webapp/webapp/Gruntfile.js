@@ -323,6 +323,7 @@ module.exports = function(grunt) {
     jsdoc : {
       dist : {
         src: [
+          'README.md',
           'src/main/webapp/require-conf.js',
           'src/main/webapp/app',
           'src/main/webapp/develop',
