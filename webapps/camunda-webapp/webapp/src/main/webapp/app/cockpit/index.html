@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>camunda Cockpit</title>
+    <title ng-bind="pageTitle" ng-init="pageTitle = 'camunda Cockpit'">camunda Cockpit</title>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,7 +48,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          
+
           <div ng-include="'templates/navigation.html'"></div>
         </div>
       </div>
