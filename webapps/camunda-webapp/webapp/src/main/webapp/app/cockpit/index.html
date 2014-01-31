@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+<<<<<<< Updated upstream
     <title>camunda Cockpit</title>
+=======
+    <title ng-bind="page.title" ng-init="page.title = 'camunda Cockpit'">camunda Cockpit</title>
+>>>>>>> Stashed changes
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -58,7 +62,7 @@
     <div class="ctn-main">
       <div class="ctn-wrapper">
         <div class="notifications-panel"></div>
-        <div class="breadcrumbs-panel"></div>
+        <div cam-breadcrumbs-panel></div>
 
         <!-- view body provided by ngView -->
         <div ng-view>

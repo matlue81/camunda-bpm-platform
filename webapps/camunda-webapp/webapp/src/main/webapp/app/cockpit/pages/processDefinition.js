@@ -1,7 +1,10 @@
+/* global ngDefine: false */
 ngDefine('cockpit.pages.processDefinition', [
+  'require',
   'angular',
   'module:dataDepend:angular-data-depend'
-], function(module, angular) {
+], function(module, require, angular) {
+  'use strict';
 
   var Controller = [
     '$scope', '$rootScope', 'search', '$q', 'Notifications', 'ProcessDefinitionResource', 'ProcessInstanceResource', 'Views', 'Data', 'Transform', 'Variables', 'dataDepend', 'processDefinition',
@@ -11,8 +14,6 @@ ngDefine('cockpit.pages.processDefinition', [
 
 
     // utilities ///////////////////////
-
-    var internalUpdateLocation;
 
     $scope.$on('$routeChanged', function() {
       processData.set('filter', parseFilterFromUri());
@@ -38,6 +39,53 @@ ngDefine('cockpit.pages.processDefinition', [
 
     var currentFilter = null;
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Auto complete a filter based on input and
+     * make the change persistent by serializing it into the url.
+     *
+     * @param  {Object} filter the filter to auto complete
+     */
+    function autoCompleteFilter(filter) {
+
+      // only apply when external (non completed)
+      // filter changes occur
+      if (currentFilter === filter) {
+        return;
+      }
+
+      var activityIds = filter.activityIds,
+          scrollTo = null,
+          changed = false;
+
+      if (activityIds && activityIds.length) {
+        scrollTo = activityIds[activityIds.length - 1];
+      }
+
+      if (filter.scrollToBpmnElement !== scrollTo) {
+        changed = true;
+      }
+
+      if (filter != currentFilter) {
+        serializeFilterToUri(filter);
+      }
+
+      $scope.filter = currentFilter = angular.extend({}, filter, {
+        scrollToBpmnElement: scrollTo
+      });
+
+
+      if (changed) {
+        // update filter
+        processData.set('filter', currentFilter);
+      }
+
+      // serialize to uri
+      serializeFilterToUri(currentFilter);
+    }
+
+>>>>>>> Stashed changes
     function parseFilterFromUri() {
 
       var params = search();
@@ -291,13 +339,12 @@ ngDefine('cockpit.pages.processDefinition', [
   var ProcessDefinitionFilterController = [ '$scope', 'debounce', 'Variables', function($scope, debounce, Variables) {
 
     var processData = $scope.processData.newChild($scope),
-        filterData,
-        cachedFilter;
+        filterData;
 
     function createRefs(elements) {
       var result = [];
 
-      angular.forEach(elements, function(e, i) {
+      angular.forEach(elements, function(e) {
         result.push({
           value: e
         });
@@ -391,7 +438,7 @@ ngDefine('cockpit.pages.processDefinition', [
 
     $scope.toggleVariableFilterHelp = function() {
       $scope.showVariableFilterHelp = !$scope.showVariableFilterHelp;
-    }
+    };
 
     $scope.addVariableFilter = function() {
       filterData.variables.push({});
