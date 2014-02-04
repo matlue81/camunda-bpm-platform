@@ -1,6 +1,6 @@
-'use strict';
-
+/* global define: false */
 define(['angular'], function(angular) {
+  'use strict';
 
   var module = angular.module('cockpit.pages');
 
@@ -15,6 +15,16 @@ define(['angular'], function(angular) {
 
     // reset breadcrumbs
     $rootScope.clearBreadcrumbs();
+
+    // set the page title
+    // $rootScope.pageTitle = [
+    //   'camunda Cockpit',
+    //   'Dashboard'
+    // ].join(' | ');
+    $rootScope.page.title = [
+      'camunda Cockpit',
+      'Dashboard'
+    ].join(' | ');
   }];
 
   var RouteConfig = [ '$routeProvider', 'AuthenticationServiceProvider', function($routeProvider, AuthenticationServiceProvider) {

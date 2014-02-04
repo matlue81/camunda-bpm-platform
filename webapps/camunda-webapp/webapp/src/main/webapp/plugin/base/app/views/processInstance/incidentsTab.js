@@ -103,13 +103,7 @@ ngDefine('cockpit.plugin.base.views', ['require'], function(module, require) {
         });
 
       };
-
-      $scope.selectActivity = function(activityId, event) {
-        event.preventDefault();
-        $scope.processData.set('filter', angular.extend({}, $scope.filter, { activityIds: [activityId] }));
-      };
-
-  }];
+    }];
 
   var Configuration = function PluginConfiguration(ViewsProvider) {
 

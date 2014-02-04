@@ -1,3 +1,4 @@
+<!-- # CE - src/main/webapp/plugin/base/views/processInstance/incidents-tab.html -->
 <table class="table table-bordered table-hover table-condensed">
   <thead>
     <tr>
@@ -39,7 +40,7 @@
       </td>
       <td>
         <span ng-show="incident.linkable">
-          <a ng-click="selectActivity(incident.activityId, $event)"
+          <a cam-select-activity="incident.activityId"
              ng-href="#/process-instance/{{ processInstance.id }}?activityIds={{ incident.activityId }}&amp;detailsTab=incidents-tab">
             {{ incident.activityName }}
           </a>
@@ -47,19 +48,18 @@
         <span ng-hide="incident.linkable">
           {{ incident.activityName }}
         </span>
-
       </td>
       <td>
         <span ng-show="incident.causeIncidentProcessInstanceId !== incident.processInstanceId" >
           <a href="#/process-instance/{{incident.causeIncidentProcessInstanceId}}?activityIds={{ incident.causeIncidentActivityId }}&amp;detailsTab=incidents-tab">
-            {{ incident.causeIncidentProcessInstanceId | shorten:8}}
+            {{ incident.causeIncidentProcessInstanceId | shorten:8 }}
           </a>
         </span>
       </td>
       <td>
         <span ng-show="incident.rootCauseIncidentProcessInstanceId !== incident.processInstanceId" >
           <a href="#/process-instance/{{incident.rootCauseIncidentProcessInstanceId}}?activityIds={{ incident.rootCauseIncidentActivityId }}&amp;detailsTab=incidents-tab">
-            {{ incident.rootCauseIncidentProcessInstanceId | shorten:8}}
+            {{ incident.rootCauseIncidentProcessInstanceId | shorten:8 }}
           </a>
         </span>
       </td>
@@ -91,3 +91,4 @@
 </table>
 
 <div paginator total-pages="pages.total" current-page="pages.current"></div>
+<!-- / CE - src/main/webapp/plugin/base/views/processInstance/incidents-tab.html -->

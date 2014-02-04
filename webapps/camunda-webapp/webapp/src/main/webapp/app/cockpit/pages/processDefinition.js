@@ -1,10 +1,10 @@
-/* global ngDefine: false */
 ngDefine('cockpit.pages.processDefinition', [
-  'require',
   'angular',
+  'cockpit/util/routeUtil',
   'module:dataDepend:angular-data-depend'
-], function(module, require, angular) {
-  'use strict';
+], function(module, angular) {
+
+  var routeUtil = require('cockpit/util/routeUtil');
 
   var Controller = [
     '$scope', '$rootScope', 'search', '$q', 'Notifications', 'ProcessDefinitionResource', 'ProcessInstanceResource', 'Views', 'Data', 'Transform', 'Variables', 'dataDepend', 'processDefinition',
@@ -14,6 +14,8 @@ ngDefine('cockpit.pages.processDefinition', [
 
 
     // utilities ///////////////////////
+
+    var internalUpdateLocation;
 
     $scope.$on('$routeChanged', function() {
       processData.set('filter', parseFilterFromUri());
@@ -29,8 +31,8 @@ ngDefine('cockpit.pages.processDefinition', [
           if (c !== undefined) {
             result.push(c);
           }
-        } catch (e) {
-          ; // safe collect -> error skips element
+        } catch (ex) {
+          // safe collect -> error skips element
         }
       });
 
@@ -39,12 +41,10 @@ ngDefine('cockpit.pages.processDefinition', [
 
     var currentFilter = null;
 
-<<<<<<< Updated upstream
-=======
     /**
-     * Auto complete a filter based on input and
+     * Auto complete a filter based on input and 
      * make the change persistent by serializing it into the url.
-     *
+     * 
      * @param  {Object} filter the filter to auto complete
      */
     function autoCompleteFilter(filter) {
@@ -85,10 +85,10 @@ ngDefine('cockpit.pages.processDefinition', [
       serializeFilterToUri(currentFilter);
     }
 
->>>>>>> Stashed changes
     function parseFilterFromUri() {
 
-      var params = search();
+      var params = search(),
+          filter;
 
       function parseArray(str) {
         if (!str) {
@@ -102,23 +102,17 @@ ngDefine('cockpit.pages.processDefinition', [
         return collect(vars, Variables.parse);
       }
 
-      var activityIds = parseArray(params.activityIds),
-          scrollToBpmnElement;
+      var activityIds = parseArray(params.activityIds);
 
-      if (activityIds.length > 0) {
-        scrollToBpmnElement = activityIds[activityIds.length-1];
-      }
-
-      currentFilter = {
+      filter = {
         activityIds: activityIds,
         parentProcessDefinitionId: params.parentProcessDefinitionId,
         businessKey: params.businessKey,
         variables: parseVariables(parseArray(params.variables)),
-        scrollToBpmnElement: scrollToBpmnElement,
         page: parseInt(params.page) || undefined
       };
 
-      return currentFilter;
+      return filter;
     }
 
     function serializeFilterToUri(filter) {
@@ -209,6 +203,12 @@ ngDefine('cockpit.pages.processDefinition', [
       }
 
       $rootScope.addBreadcrumb({ type: 'processDefinition', processDefinition: definition });
+
+      $rootScope.pageTitle = [
+        'camunda Cockpit',
+        definition.name || definition.id,
+        'Definition View'
+      ].join(' | ');
     });
 
     $scope.instanceStatistics = processData.observe([ 'instances.all', 'instances.current' ], function(allCount, currentCount) {
@@ -220,13 +220,7 @@ ngDefine('cockpit.pages.processDefinition', [
       $scope.processDiagram = processDiagram;
     });
 
-    processData.observe('filter', function(filter) {
-      if (filter != currentFilter) {
-        serializeFilterToUri(filter);
-      }
-
-      $scope.filter = filter;
-    });
+    processData.observe('filter', autoCompleteFilter);
 
     $scope.handleBpmnElementSelection = function(activityId, event) {
       var newFilter = angular.copy(currentFilter),
@@ -339,12 +333,13 @@ ngDefine('cockpit.pages.processDefinition', [
   var ProcessDefinitionFilterController = [ '$scope', 'debounce', 'Variables', function($scope, debounce, Variables) {
 
     var processData = $scope.processData.newChild($scope),
-        filterData;
+        filterData,
+        cachedFilter;
 
     function createRefs(elements) {
       var result = [];
 
-      angular.forEach(elements, function(e) {
+      angular.forEach(elements, function(e, i) {
         result.push({
           value: e
         });
@@ -438,7 +433,7 @@ ngDefine('cockpit.pages.processDefinition', [
 
     $scope.toggleVariableFilterHelp = function() {
       $scope.showVariableFilterHelp = !$scope.showVariableFilterHelp;
-    };
+    }
 
     $scope.addVariableFilter = function() {
       filterData.variables.push({});
@@ -494,7 +489,7 @@ ngDefine('cockpit.pages.processDefinition', [
           try {
             variable = Variables.parse(text);
           } catch (e) {
-            ; // ok, failed to parse variable
+            // ok, failed to parse variable
           }
 
           ngModel.$setValidity('processVariableFilter', !!variable);
@@ -504,7 +499,7 @@ ngDefine('cockpit.pages.processDefinition', [
         ngModel.$parsers.push(parseText);
         ngModel.$formatters.push(Variables.toString);
       }
-    }
+    };
   }];
 
   var RouteConfig = [
@@ -515,27 +510,9 @@ ngDefine('cockpit.pages.processDefinition', [
     AuthenticationServiceProvider
   ) {
 
-    // $routeProvider.when('/process-definition/:id', {
-    //   redirectTo: '/process-definition/:id/live'
-    // });
-
     $routeProvider
     .when('/process-definition/:id', {
-      redirectTo: function(params, currentPath, currentSearch) {
-        return '/process-definition/'+ params.id +'/live'+
-        // in case we have something to pass to the search (overkill? could simply use "?")
-        (currentSearch.detailsTab || currentSearch.activityIds ? '?' : '') +
-        // make an array with the search
-        [
-          currentSearch.activityIds ? 'activityIds='+ currentSearch.activityIds : false,
-          currentSearch.detailsTab ? 'detailsTab='+ currentSearch.detailsTab : false
-        ]
-        // remove the empty values...
-        .filter(function(v) { return v; })
-        // and join.
-        .join('&');
-      },
-      reloadOnSearch: false
+      redirectTo: routeUtil.redirectToLive
     })
     .when('/process-definition/:id/live', {
       templateUrl: 'pages/process-definition.html',

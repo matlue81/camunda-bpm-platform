@@ -11,7 +11,9 @@
         <loopCardinality>2</loopCardinality>
       </multiInstanceLoopCharacteristics>
     </receiveTask>
-    <sequenceFlow sourceRef="waitState" targetRef="theEnd"/>
+    <sequenceFlow sourceRef="waitState" targetRef="interaction"/>
+    <userTask id="interaction" name="Interaction"/>
+    <sequenceFlow sourceRef="interaction" targetRef="theEnd"/>
     <endEvent id="theEnd"/>
   </process>
 
