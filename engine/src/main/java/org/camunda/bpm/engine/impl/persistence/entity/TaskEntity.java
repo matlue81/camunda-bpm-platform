@@ -115,7 +115,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
       execution.addTask(this);
     }
 
-    // create task history detail
+    // task history detail: create
     HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
     entityHTD.setOperationType("insert");
     entityHTD.setUserId("icke");
@@ -132,7 +132,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
     commandContext.registerCommandContextCloseListener(this);
 
-    // update task history detail
+    // task history detail: update
     HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
     entityHTD.setOperationType("update");
     entityHTD.setUserId("icke");
@@ -169,6 +169,13 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
       execution.removeTask(this);
       execution.signal(null, null);
     }
+
+    // task history detail: complete
+    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
+    entityHTD.setOperationType("complete");
+    entityHTD.setUserId("icke");
+    entityHTD.setTimeStamp(new Date());
+    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   public void delegate(String userId) {

@@ -70,10 +70,26 @@
     select * from ${prefix}ACT_HI_TASK_DETAIL where ID_ = #{historicTaskDetailId}
   </select>
 
-  <select id="selectHistoricTaskDetailIdsByProcessInstanceId" resultType="string" parameterType="org.camunda.bpm.engine.impl.db.ListQueryParameterObject" >
-    select ID_
-    from ${prefix}ACT_HI_TASK_DETAIL
-    where PROC_INST_ID_ = #{parameter}
+  <select id="selectHistoricTaskDetailsByQueryCriteria" parameterType="org.camunda.bpm.engine.impl.HistoricTaskDetailQueryImpl" resultMap="historicTaskDetailResultMap">
+    ${limitBefore}
+    select RES.* ${limitBetween}
+    <include refid="selectHistoricTaskDetailsByQueryCriteriaSql"/>
+    ${orderBy}
+    ${limitAfter}
   </select>
+
+  <select id="selectHistoricTaskDetailCountByQueryCriteria" parameterType="org.camunda.bpm.engine.impl.HistoricTaskDetailQueryImpl" resultType="long">
+    select count(RES.*)
+    <include refid="selectHistoricTaskDetailsByQueryCriteriaSql"/>
+  </select>
+
+  <sql id="selectHistoricTaskDetailsByQueryCriteriaSql">
+    from ${prefix}ACT_HI_TASK_DETAIL RES
+    <where>
+      <if test="taskId != null">
+        RES.TASK_ID_ = #{taskId}
+      </if>
+    </where>
+  </sql>
 
 </mapper>

@@ -152,6 +152,7 @@ import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceMa
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricDetailManager;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceManager;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricStatisticsManager;
+import org.camunda.bpm.engine.impl.persistence.entity.HistoricTaskDetailManager;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricTaskInstanceManager;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricVariableInstanceManager;
 import org.camunda.bpm.engine.impl.persistence.entity.IdentityInfoManager;
@@ -763,8 +764,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
       addSessionFactory(new GenericManagerFactory(HistoricStatisticsManager.class));
       addSessionFactory(new GenericManagerFactory(HistoricDetailManager.class));
       addSessionFactory(new GenericManagerFactory(HistoricProcessInstanceManager.class));
-      addSessionFactory(new GenericManagerFactory(HistoricVariableInstanceManager.class));
+      addSessionFactory(new GenericManagerFactory(HistoricTaskDetailManager.class));
       addSessionFactory(new GenericManagerFactory(HistoricTaskInstanceManager.class));
+      addSessionFactory(new GenericManagerFactory(HistoricVariableInstanceManager.class));
       addSessionFactory(new GenericManagerFactory(IdentityInfoManager.class));
       addSessionFactory(new GenericManagerFactory(IdentityLinkManager.class));
       addSessionFactory(new GenericManagerFactory(JobManager.class));
