@@ -4,24 +4,36 @@ var _ = require('underscore');
 
 var rjsConf = require('./src/main/webapp/require-conf');
 
+
 var commentLineExp = /^[\s]*<!-- (\/|#) (CE|EE)/;
 
+var semAttributeExp = / sem-[^\s]+/;
+
+var htmlExtExp = /\.html$/;
+
 function productionFileProcessing(content, srcpath) {
-  // removes the template comments
-  content = content
-            .split('\n').filter(function(line) {
-              // console.info(line.slice(0, 10), !commentLineExp.test(line));
-              return !commentLineExp.test(line);
-            }).join('\n');
+  if (htmlExtExp.test(srcpath)) {
+    content = content
+
+      // removes the template comments
+      .split('\n').filter(function(line) {
+        // console.info(line.slice(0, 10), !commentLineExp.test(line));
+        return !commentLineExp.test(line);
+      })
+      .join('\n')
+
+      // removes the "sem-*" attributes used in HTML for e2e testing
+      .replace(semAttributeExp, '');
+  }
 
   return content;
 }
 
 
 function developmentFileProcessing(content, srcpath) {
-  console.log(this, grunt);
-
-  // Unfortunately, this might (in some cases) make angular complaining about template having no single root element (when the "replace" option is set to "true").
+  // Unfortunately, this might (in some cases) make angular
+  // complaining about template having no single root element
+  // (when the "replace" option is set to "true").
 
   // if (/\.html$/.test(srcpath)) {
   //   content = '<!-- # CE - auto-comment - '+ srcpath +' -->\n'+
@@ -488,7 +500,7 @@ module.exports = function(grunt) {
       // TODO: minification using ngr:
       // - Minifaction: https://app.camunda.com/jira/browse/CAM-1667
       // - Bug in ngDefine: https://app.camunda.com/jira/browse/CAM-1713
-      
+
       return grunt.task.run(defaultTasks.concat([
         'copy:assets',
         'copy:production'
