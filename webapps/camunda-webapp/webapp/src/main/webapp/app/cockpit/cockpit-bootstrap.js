@@ -1,7 +1,7 @@
 (function(document, window, require) {
   /**
    * A helper module to prepare the cockpit plugin for bootstrap.
-   * @module cockpit-bootstrap
+   * @exports cockpit-bootstrap
    */
 
   var baseUrl = '../../../';
