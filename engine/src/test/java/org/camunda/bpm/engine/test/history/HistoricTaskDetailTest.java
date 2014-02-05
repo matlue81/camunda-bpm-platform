@@ -15,15 +15,37 @@ package org.camunda.bpm.engine.test.history;
 import org.camunda.bpm.engine.history.HistoricTaskDetail;
 import org.camunda.bpm.engine.history.HistoricTaskDetailQuery;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
 import org.camunda.bpm.engine.impl.test.PluggableProcessEngineTestCase;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
 /**
  * @author Danny Gräf
  */
 public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
+
+  public void testTaskEntityBeanPropertyChanges() {
+    TaskEntity entity = new TaskEntity();
+
+    // assign and validate changes
+    entity.setAssignee("icke");
+    Map<String, Object> changes = entity.getPropertyChanges();
+    assertEquals(1, changes.size());
+    assertEquals("icke", changes.get("assignee").toString());
+
+    // then: assign it again
+    entity.setAssignee("er");
+    changes = entity.getPropertyChanges();
+    assertEquals(1, changes.size());
+    assertEquals("er", changes.get("assignee").toString());
+  }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
   public void testTaskComplete() {
@@ -33,23 +55,38 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     ProcessInstance process = runtimeService.startProcessInstanceByKey("HistoryLevelTest");
     Task task = taskService.createTaskQuery().singleResult();
 
-    // expect: one detail entry of task creation
+    // expect: one entry for task creation
     HistoricTaskDetailQuery query = historyService.createHistoricTaskDetailQuery();
     assertEquals(1, query.count());
-    HistoricTaskDetail create = query.singleResult();
-    assertEquals("insert", create.getOperationType());
-    assertEquals("icke", create.getUserId());
+
+    // assert: all details
+    HistoricTaskDetail createName = query.singleResult();
+    String createOperationId = createName.getOperationId();
+    assertNotNull(createOperationId);
+    Date createTimestamp = createName.getTimestamp();
+    assertTrue(createTimestamp.before(new Date()));
+    assertNotNull(createName.getId());
+    assertNotNull(createName.getExecutionId());
+    assertNotNull(createName.getProcessDefinitionId());
+    assertNotNull(createName.getProcessInstanceId());
+    assertEquals(task.getId(), createName.getTaskId());
+    assertNull(createName.getUserId());
+    assertEquals("a task", createName.getValue());
+
+    // then: assign the task
+    taskService.delegateTask(task.getId(), "kermit");
 
     // then: complete the task
     taskService.complete(task.getId());
 
     // expect: process ended
     assertProcessEnded(process.getId());
-
-    // expect: a second history entry of task completion
-    assertEquals(2, query.count());
-    HistoricTaskDetail complete = query.list().get(1);
-    assertEquals("complete", complete.getOperationType());
-    assertEquals("icke", complete.getUserId());
+//
+//    // expect: a second history entry of task completion
+//    assertEquals(2, query.count());
+//    HistoricTaskDetail complete = query.list().get(1);
+//    assertEquals("complete", complete.getOperationType());
+//    assertEquals("icke", complete.getUserId());
   }
+
 }

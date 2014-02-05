@@ -105,6 +105,21 @@ public interface HistoryEventProducer {
   public HistoryEvent createTaskInstanceCompleteEvt(DelegateTask task, String deleteReason);
 
 
+  /**
+   * Creates the history event fired when a task detail is <strong>changed</strong>.
+   *
+   *
+   *
+   * @param userId that operates on the task
+   * @param operationId that identifies multiple changes
+   * @param operation that changes a property
+   * @param property that is changed
+   * @param value of the property now
+   * @param task
+   * @return the history event
+   */
+  public HistoryEvent createTaskDetailChangeEvt(String userId, String operationId, String operation, String property, Object value, DelegateTask task);
+
   // HistoricVariableUpdateEventEntity //////////////////////
 
   /**

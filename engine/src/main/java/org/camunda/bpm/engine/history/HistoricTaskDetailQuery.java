@@ -14,6 +14,8 @@ package org.camunda.bpm.engine.history;
 
 import org.camunda.bpm.engine.query.Query;
 
+import java.util.Date;
+
 
 /**
  * Programmatic querying for {@link org.camunda.bpm.engine.history.HistoricTaskDetail}s.
@@ -22,8 +24,22 @@ import org.camunda.bpm.engine.query.Query;
  */
 public interface HistoricTaskDetailQuery extends Query<HistoricTaskDetailQuery, HistoricTaskDetail> {
 
+  HistoricTaskDetailQuery processDefinitionId(String processDefinitionId);
+
   HistoricTaskDetailQuery processInstanceId(String processInstanceId);
 
+  HistoricTaskDetailQuery executionId(String executionId);
+
   HistoricTaskDetailQuery taskId(String taskId);
+
+  HistoricTaskDetailQuery userId(String userId);
+
+  HistoricTaskDetailQuery timestamp(Date timestamp);
+
+  HistoricTaskDetailQuery operationId(String operationId);
+
+  HistoricTaskDetailQuery operationType(String operationType);
+
+  HistoricTaskDetailQuery property(String property);
 
 }

@@ -23,7 +23,7 @@ create table ACT_HI_ACTINST (
     EXECUTION_ID_ varchar(64) not null,
     ACT_ID_ varchar(255) not null,
     TASK_ID_ varchar(64),
-   	CALL_PROC_INST_ID_ varchar(64),
+    CALL_PROC_INST_ID_ varchar(64),
     ACT_NAME_ varchar(255),
     ACT_TYPE_ varchar(255) not null,
     ASSIGNEE_ varchar(64),
@@ -120,7 +120,6 @@ create table ACT_HI_ATTACHMENT (
 create table ACT_HI_TASK_DETAIL (
     ID_ varchar(64) not null,
     PROC_DEF_ID_ varchar(64),
-    TASK_DEF_KEY_ varchar(255),
     PROC_INST_ID_ varchar(64),
     EXECUTION_ID_ varchar(64),
     TASK_ID_ varchar(64),
@@ -128,8 +127,8 @@ create table ACT_HI_TASK_DETAIL (
     TIMESTAMP_ timestamp,
     OPERATION_TYPE_ varchar(30),
     OPERATION_ID_ varchar(64),
-    STRING_VALUE_ varchar(4000),
-    DATE_VALUE_ timestamp,
+    PROPERTY_ varchar(64),
+    VALUE_ varchar(4000),
     primary key (ID_)
 );
 

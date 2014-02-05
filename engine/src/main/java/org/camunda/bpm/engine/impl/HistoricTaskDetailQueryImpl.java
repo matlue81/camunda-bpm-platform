@@ -17,6 +17,7 @@ import org.camunda.bpm.engine.history.HistoricTaskDetailQuery;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.interceptor.CommandExecutor;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,8 +27,15 @@ import java.util.List;
 public class HistoricTaskDetailQueryImpl extends AbstractQuery<HistoricTaskDetailQuery, HistoricTaskDetail> implements HistoricTaskDetailQuery {
 
   private static final long serialVersionUID = 1L;
-  protected String taskId;
+  protected String processDefinitionId;
   protected String processInstanceId;
+  protected String executionId;
+  protected String taskId;
+  protected String userId;
+  protected Date timestamp;
+  protected String operationId;
+  protected String operationType;
+  protected String property;
 
   public HistoricTaskDetailQueryImpl() {
   }
@@ -40,13 +48,48 @@ public class HistoricTaskDetailQueryImpl extends AbstractQuery<HistoricTaskDetai
     super(commandExecutor);
   }
 
+  public HistoricTaskDetailQuery processDefinitionId(String processDefinitionId) {
+    this.processDefinitionId = processDefinitionId;
+    return this;
+  }
+
   public HistoricTaskDetailQuery processInstanceId(String processInstanceId) {
     this.processInstanceId = processInstanceId;
     return this;
   }
 
+  public HistoricTaskDetailQuery executionId(String executionId) {
+    this.executionId = executionId;
+    return this;
+  }
+
   public HistoricTaskDetailQuery taskId(String taskId) {
     this.taskId = taskId;
+    return this;
+  }
+
+  public HistoricTaskDetailQuery userId(String userId) {
+    this.userId = userId;
+    return this;
+  }
+
+  public HistoricTaskDetailQuery timestamp(Date timestamp) {
+    this.timestamp = timestamp;
+    return this;
+  }
+
+  public HistoricTaskDetailQuery operationId(String operationId) {
+    this.operationId = operationId;
+    return this;
+  }
+
+  public HistoricTaskDetailQuery operationType(String operationType) {
+    this.operationType = operationType;
+    return this;
+  }
+
+  public HistoricTaskDetailQuery property(String property) {
+    this.property = property;
     return this;
   }
 

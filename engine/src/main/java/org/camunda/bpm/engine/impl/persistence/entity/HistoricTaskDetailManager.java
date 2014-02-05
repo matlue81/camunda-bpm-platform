@@ -15,9 +15,15 @@ package org.camunda.bpm.engine.impl.persistence.entity;
 import org.camunda.bpm.engine.history.HistoricTaskDetail;
 import org.camunda.bpm.engine.impl.HistoricTaskDetailQueryImpl;
 import org.camunda.bpm.engine.impl.Page;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.camunda.bpm.engine.impl.context.Context;
+import org.camunda.bpm.engine.impl.history.event.HistoryEvent;
+import org.camunda.bpm.engine.impl.history.handler.HistoryEventHandler;
+import org.camunda.bpm.engine.impl.history.producer.HistoryEventProducer;
 import org.camunda.bpm.engine.impl.persistence.AbstractHistoricManager;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -34,4 +40,20 @@ public class HistoricTaskDetailManager extends AbstractHistoricManager {
     return getDbSqlSession().selectList("selectHistoricTaskDetailsByQueryCriteria", historicDetailQuery, page);
   }
 
+  public void createHistoricTaskDetails(String userId, String operation, TaskEntity taskEntity, Map<String, Object> propertyChanges) {
+    ProcessEngineConfigurationImpl configuration = Context.getProcessEngineConfiguration();
+    String operationId = configuration.getIdGenerator().getNextId();
+
+    int historyLevel = configuration.getHistoryLevel();
+    if(historyLevel>=ProcessEngineConfigurationImpl.HISTORYLEVEL_FULL) {
+
+      final HistoryEventProducer eventProducer = configuration.getHistoryEventProducer();
+      final HistoryEventHandler eventHandler = configuration.getHistoryEventHandler();
+
+      for (Map.Entry<String, Object> change : propertyChanges.entrySet()) {
+        HistoryEvent evt = eventProducer.createTaskDetailChangeEvt(userId, operationId, operation, change.getKey(), change.getValue(), taskEntity);
+        eventHandler.handleEvent(evt);
+      }
+    }
+  }
 }

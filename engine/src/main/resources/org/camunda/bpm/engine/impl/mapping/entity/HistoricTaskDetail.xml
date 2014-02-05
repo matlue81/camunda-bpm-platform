@@ -31,8 +31,8 @@
         TIMESTAMP_,
         OPERATION_ID_ ,
         OPERATION_TYPE_,
-        STRING_VALUE_ ,
-        DATE_VALUE_
+        PROPERTY_,
+        VALUE_
       ) values (
         #{id ,jdbcType=VARCHAR},
         #{processDefinitionId, jdbcType=VARCHAR},
@@ -40,11 +40,11 @@
         #{executionId, jdbcType=VARCHAR},
         #{taskId ,jdbcType=VARCHAR},
         #{userId ,jdbcType=VARCHAR},
-        #{timeStamp ,jdbcType=TIMESTAMP},
+        #{timestamp ,jdbcType=TIMESTAMP},
         #{operationId ,jdbcType=VARCHAR},
         #{operationType ,jdbcType=VARCHAR},
-        #{stringValue ,jdbcType=VARCHAR},
-        #{dateValue ,jdbcType=TIMESTAMP}
+        #{property, jdbcType=VARCHAR},
+        #{value ,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -57,11 +57,11 @@
     <result property="executionId" column="EXECUTION_ID_" jdbcType="VARCHAR" />
     <result property="taskId" column="TASK_ID_" jdbcType="VARCHAR" />
     <result property="userId" column="USER_ID_" jdbcType="VARCHAR" />
-    <result property="timeStamp" column="TIMESTAMP_" jdbcType="TIMESTAMP" />
+    <result property="timestamp" column="TIMESTAMP_" jdbcType="TIMESTAMP" />
     <result property="operationId" column="OPERATION_ID_" jdbcType="VARCHAR" />
     <result property="operationType" column="OPERATION_TYPE_" jdbcType="VARCHAR" />
-    <result property="stringValue" column="STRING_VALUE_" jdbcType="VARCHAR" />
-    <result property="dateValue" column="DATE_VALUE_" jdbcType="TIMESTAMP" />
+    <result property="property" column="PROPERTY_" jdbcType="VARCHAR" />
+    <result property="value" column="VALUE_" jdbcType="VARCHAR" />
   </resultMap>
 
   <!-- HISTORIC TASK DETAIL SELECT -->
@@ -86,8 +86,29 @@
   <sql id="selectHistoricTaskDetailsByQueryCriteriaSql">
     from ${prefix}ACT_HI_TASK_DETAIL RES
     <where>
+      <if test="processDefinitionId != null">
+        RES.PROC_DEF_ID_ = #{processDefinitionId}
+      </if>
+      <if test="processInstanceId != null">
+        and RES.PROC_INST_ID_ = #{processInstanceId}
+      </if>
+      <if test="executionId != null">
+        and RES.EXECUTION_ID_ = #{executionId}
+      </if>
       <if test="taskId != null">
-        RES.TASK_ID_ = #{taskId}
+        and RES.TASK_ID_ = #{taskId}
+      </if>
+      <if test="userId != null">
+        and RES.USER_ID_ = #{userId}
+      </if>
+      <if test="operationId != null">
+        and RES.OPERATION_ID_ = #{operationId}
+      </if>
+      <if test="operationType != null">
+        and RES.OPERATION_TYPE_ = #{operationType}
+      </if>
+      <if test="property != null">
+        and RES.PROPERTY_ = #{property}
       </if>
     </where>
   </sql>

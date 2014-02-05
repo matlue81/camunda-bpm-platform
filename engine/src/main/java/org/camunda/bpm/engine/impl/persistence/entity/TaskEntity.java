@@ -12,16 +12,12 @@
  */
 package org.camunda.bpm.engine.impl.persistence.entity;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Logger;
 
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.SuspendedEntityInteractionException;
@@ -49,7 +45,9 @@ import org.camunda.bpm.engine.task.Task;
  * @author Joram Barrez
  * @author Falko Menge
  */
-public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask, Serializable, PersistentObject, HasRevision, CommandContextCloseListener {
+public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask, Serializable, PersistentObject, HasRevision, CommandContextCloseListener, PropertyChangeListener {
+
+  private static Logger log = Logger.getLogger(TaskEntity.class.getName());
 
   public static final String DELETE_REASON_COMPLETED = "completed";
   public static final String DELETE_REASON_DELETED = "deleted";
@@ -90,10 +88,40 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   protected String eventName;
 
+  private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+  /**
+   * contains all changed properties of this entity
+   */
+  private Map<String, Object> propertyChanges = new HashMap<String, Object>();
+
+  public void propertyChange(PropertyChangeEvent evt) {
+    Object newValue = evt.getNewValue();
+    String propertyName = evt.getPropertyName();
+    log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Name      = " + propertyName);
+    log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> New Value = " + newValue);
+    propertyChanges.put(propertyName, newValue);
+  }
+
+  public Map<String, Object> getPropertyChanges() {
+    return propertyChanges;
+  }
+
+  public void createTaskDetailHistory(String operation) {
+    CommandContext commandContext = Context.getCommandContext();
+    if (commandContext!=null) {
+      String userId = commandContext.getAuthenticatedUserId();
+      commandContext.getHistoricTaskDetailManager().createHistoricTaskDetails(userId, operation, this, propertyChanges);
+      propertyChanges = new HashMap<String, Object>(); // reset changes
+    }
+  }
+
   public TaskEntity() {
+    pcs.addPropertyChangeListener(this);
   }
 
   public TaskEntity(String taskId) {
+    pcs.addPropertyChangeListener(this);
     this.id = taskId;
   }
 
@@ -114,13 +142,6 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     if(execution != null) {
       execution.addTask(this);
     }
-
-    // task history detail: create
-    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
-    entityHTD.setOperationType("insert");
-    entityHTD.setUserId("icke");
-    entityHTD.setTimeStamp(new Date());
-    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   public void update() {
@@ -131,13 +152,6 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     dbSqlSession.update(this);
 
     commandContext.registerCommandContextCloseListener(this);
-
-    // task history detail: update
-    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
-    entityHTD.setOperationType("update");
-    entityHTD.setUserId("icke");
-    entityHTD.setTimeStamp(new Date());
-    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   /** new task.  Embedded state and create time will be initialized.
@@ -150,7 +164,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
   public static TaskEntity create() {
     TaskEntity task = new TaskEntity();
     task.isIdentityLinksInitialized = true;
-    task.createTime = ClockUtil.getCurrentTime();
+    task.setCreateTime(ClockUtil.getCurrentTime());
     return task;
   }
 
@@ -174,7 +188,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
     entityHTD.setOperationType("complete");
     entityHTD.setUserId("icke");
-    entityHTD.setTimeStamp(new Date());
+    entityHTD.setTimestamp(new Date());
     Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
@@ -425,6 +439,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setName(String taskName) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("name", this.name, taskName);
     this.name = taskName;
   }
 
@@ -435,6 +450,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setDescription(String description) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("description", this.description, description);
     this.description = description;
   }
 
@@ -453,6 +469,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 //    if (assignee!=null && assignee.equals(this.assignee)) {
 //      return;
 //    }
+    pcs.firePropertyChange("assignee", this.assignee, assignee);
     this.assignee = assignee;
 
     CommandContext commandContext = Context.getCommandContext();
@@ -481,6 +498,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 //    if (owner!=null && owner.equals(this.owner)) {
 //      return;
 //    }
+    pcs.firePropertyChange("owner", this.owner, owner);
     this.owner = owner;
 
   }
@@ -492,6 +510,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setDueDate(Date dueDate) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("dueDate", this.dueDate, dueDate);
     this.dueDate = dueDate;
   }
 
@@ -501,6 +520,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setPriority(int priority) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("priority", this.priority, priority);
     this.priority = priority;
   }
 
@@ -510,6 +530,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setParentTaskId(String parentTaskId) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("parentTaskId", this.parentTaskId, parentTaskId);
     this.parentTaskId = parentTaskId;
   }
 
@@ -663,6 +684,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     return isDeleted;
   }
   public void setDeleted(boolean isDeleted) {
+    pcs.firePropertyChange("delete", this.isDeleted, isDeleted);
     this.isDeleted = isDeleted;
   }
   public String getParentTaskId() {
@@ -688,6 +710,7 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public void setFollowUpDate(Date followUpDate) {
     registerCommandContextCloseListener();
+    pcs.firePropertyChange("followUpDate", this.followUpDate, followUpDate);
     this.followUpDate = followUpDate;
   }
 

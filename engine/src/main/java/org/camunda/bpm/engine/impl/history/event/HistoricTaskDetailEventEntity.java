@@ -23,9 +23,9 @@ public class HistoricTaskDetailEventEntity extends HistoryEvent {
   protected String operationType;
   protected String taskId;
   protected String userId;
-  protected Date timeStamp;
-  protected String stringValue;
-  protected Date dateValue;
+  protected Date timestamp;
+  protected String property;
+  protected String value;
 
   public String getOperationId() {
     return operationId;
@@ -43,16 +43,16 @@ public class HistoricTaskDetailEventEntity extends HistoryEvent {
     return userId;
   }
 
-  public Date getTimeStamp() {
-    return timeStamp;
+  public Date getTimestamp() {
+    return timestamp;
   }
 
-  public String getStringValue() {
-    return stringValue;
+  public String getProperty() {
+    return property;
   }
 
-  public Date getDateValue() {
-    return dateValue;
+  public String getValue() {
+    return value;
   }
 
   public void setOperationId(String operationId) {
@@ -71,16 +71,16 @@ public class HistoricTaskDetailEventEntity extends HistoryEvent {
     this.userId = userId;
   }
 
-  public void setTimeStamp(Date timeStamp) {
-    this.timeStamp = timeStamp;
+  public void setTimestamp(Date timestamp) {
+    this.timestamp = timestamp;
   }
 
-  public void setStringValue(String stringValue) {
-    this.stringValue = stringValue;
+  public void setProperty(String property) {
+    this.property = property;
   }
 
-  public void setDateValue(Date dateValue) {
-    this.dateValue = dateValue;
+  public void setValue(String value) {
+    this.value = value;
   }
 
   @Override
@@ -90,9 +90,9 @@ public class HistoricTaskDetailEventEntity extends HistoryEvent {
         + ", operationId =" + operationId
         + ", operationType =" + operationId
         + ", userId =" + userId
-        + ", timeStamp =" + timeStamp
-        + ", stringValue =" + stringValue
-        + ", dateValue =" + dateValue
+        + ", timestamp =" + timestamp
+        + ", property =" + property
+        + ", value =" + value
         + ", id=" + id
         + ", eventType=" + eventType
         + ", executionId=" + executionId

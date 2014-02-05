@@ -19,6 +19,7 @@ import org.camunda.bpm.engine.impl.context.Context;
 import org.camunda.bpm.engine.impl.history.event.HistoricActivityInstanceEventEntity;
 import org.camunda.bpm.engine.impl.history.event.HistoricFormPropertyEventEntity;
 import org.camunda.bpm.engine.impl.history.event.HistoricProcessInstanceEventEntity;
+import org.camunda.bpm.engine.impl.history.event.HistoricTaskDetailEventEntity;
 import org.camunda.bpm.engine.impl.history.event.HistoricTaskInstanceEventEntity;
 import org.camunda.bpm.engine.impl.history.event.HistoricVariableUpdateEventEntity;
 import org.camunda.bpm.engine.impl.history.event.HistoryEvent;
@@ -127,6 +128,14 @@ public class DefaultHistoryEventProducer implements HistoryEventProducer {
       ByteArrayEntity byteArrayValue = variableInstance.getByteArrayValue();
       evt.setByteValue(byteArrayValue.getBytes());
     }
+  }
+
+  protected void initTaskDetailChangeEvent(HistoricTaskDetailEventEntity evt, TaskEntity entity) {
+    evt.setTimestamp(ClockUtil.getCurrentTime());
+    evt.setProcessDefinitionId(entity.getProcessDefinitionId());
+    evt.setProcessInstanceId(entity.getProcessInstanceId());
+    evt.setExecutionId(entity.getExecutionId());
+    evt.setTaskId(entity.getId());
   }
 
   protected HistoryEvent createHistoricVariableEvent(VariableInstanceEntity variableInstance, VariableScopeImpl variableScopeImpl, String eventType) {
@@ -335,6 +344,19 @@ public class DefaultHistoryEventProducer implements HistoryEventProducer {
     // set delete reason
     evt.setDeleteReason(deleteReason);
 
+    return evt;
+  }
+
+  public HistoryEvent createTaskDetailChangeEvt(String userId, String operationId, String operation, String property, Object value, DelegateTask task) {
+    HistoricTaskDetailEventEntity evt = new HistoricTaskDetailEventEntity();
+
+    initTaskDetailChangeEvent(evt, (TaskEntity) task);
+
+    evt.setUserId(userId);
+    evt.setOperationId(operationId);
+    evt.setOperationType(operation);
+    evt.setProperty(property);
+    evt.setValue(value.toString());
     return evt;
   }
 

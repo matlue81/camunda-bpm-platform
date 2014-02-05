@@ -64,7 +64,7 @@ public class ClaimTaskCmd implements Command<Void>, Serializable {
       task.setAssignee(null);
     }
 
-//    task.createHistory("claim");
+//    task.createTaskDetailHistory("claim");
 
     return null;
   }

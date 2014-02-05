@@ -42,18 +42,18 @@ public interface HistoricTaskDetail {
   String getUserId();
 
   /** Timestamp of this change. */
-  Date getTimeStamp();
+  Date getTimestamp();
+
+  /** The unique identifier of this operation, that identifies multiple changes. */
+  String getOperationId();
 
   /** Type of this operation, like create, assign, claim or something else (enum usage?). */
   String getOperationType();
 
-  /** The unique identifier of this operation, to combines multiple changes. */
-  String getOperationId();
+  /** The property changed by this operation. */
+  String getProperty();
 
-  /** A string value change of this operation. */
-  String getStringValue();
-
-  /** A date value change of this operation. */
-  Date getDateValue();
+  /** The new value of the property. */
+  String getValue();
 
 }

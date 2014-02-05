@@ -41,10 +41,10 @@ public class SaveTaskCmd implements Command<Void>, Serializable {
     if (task.getRevision()==0) {
       task.insert(null);
       commandContext.getHistoricTaskInstanceManager().createHistoricTask(task);
-//      task.createHistory("create");
+      task.createTaskDetailHistory("create");
     } else {
       task.update();
-//      task.createHistory("update");
+      task.createTaskDetailHistory("update");
     }
 
     return null;
