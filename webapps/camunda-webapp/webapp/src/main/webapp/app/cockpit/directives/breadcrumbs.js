@@ -110,7 +110,7 @@ ngDefine('cockpit.directives', [ 'angular' ], function(module, angular) {
 
   var Directive = function (ProcessInstanceResource, ProcessDefinitionResource) {
     return {
-      restrict: 'A',
+      restrict: 'EA',
       template: breadcrumpsTemplate,
       controller: DirectiveController
     };
