@@ -78,7 +78,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     cleanupHistory();
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testCreateAndCompleteTask() {
     startTestProcess();
 
@@ -98,7 +98,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     assertNotNull(create.getOperationId());
     assertTrue(create.getTimestamp().before(new Date()));
     assertEquals("name", create.getProperty());
-    assertEquals("a task", create.getValue());
+    assertEquals("my task", create.getValue());
 
     completeProcess();
 
@@ -110,7 +110,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     assertTrue(Boolean.parseBoolean(complete.getValue()));
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testAssignTask() {
     startTestProcess();
 
@@ -129,7 +129,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     completeProcess();
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testChangeTaskOwner() {
     startTestProcess();
 
@@ -148,7 +148,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     completeProcess();
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testClaimTask() {
     startTestProcess();
 
@@ -167,7 +167,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     completeProcess();
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testDelegateTask() {
     startTestProcess();
 
@@ -187,7 +187,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
     completeProcess();
   }
 
-  @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoryLevelTest.bpmn20.xml"})
+  @Deployment(resources = {"org/camunda/bpm/engine/test/history/oneTaskProcess.bpmn20.xml"})
   public void testResolveTask() {
     startTestProcess();
 
@@ -206,7 +206,7 @@ public class HistoricTaskDetailTest extends PluggableProcessEngineTestCase {
 
   private void startTestProcess() {
     processEngineConfiguration.setHistoryLevel(ProcessEngineConfigurationImpl.HISTORYLEVEL_FULL);
-    process = runtimeService.startProcessInstanceByKey("HistoryLevelTest");
+    process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
     task = taskService.createTaskQuery().singleResult();
   }
 
