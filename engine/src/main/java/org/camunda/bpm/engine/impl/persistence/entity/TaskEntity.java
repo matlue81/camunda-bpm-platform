@@ -95,27 +95,6 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
    */
   private Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
-  public void propertyChange(PropertyChangeEvent evt) {
-    Object newValue = evt.getNewValue();
-    String propertyName = evt.getPropertyName();
-    log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Name      = " + propertyName);
-    log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> New Value = " + newValue);
-    propertyChanges.put(propertyName, newValue);
-  }
-
-  public Map<String, Object> getPropertyChanges() {
-    return propertyChanges;
-  }
-
-  public void createTaskDetailHistory(String operation) {
-    CommandContext commandContext = Context.getCommandContext();
-    if (commandContext!=null) {
-      String userId = commandContext.getAuthenticatedUserId();
-      commandContext.getHistoricTaskDetailManager().createHistoricTaskDetails(userId, operation, this, propertyChanges);
-      propertyChanges = new HashMap<String, Object>(); // reset changes
-    }
-  }
-
   public TaskEntity() {
     pcs.addPropertyChangeListener(this);
   }
@@ -183,13 +162,6 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
       execution.removeTask(this);
       execution.signal(null, null);
     }
-
-    // task history detail: complete
-    HistoricTaskDetailEventEntity entityHTD = new HistoricTaskDetailEventEntity();
-    entityHTD.setOperationType("complete");
-    entityHTD.setUserId("icke");
-    entityHTD.setTimestamp(new Date());
-    Context.getCommandContext().getDbSqlSession().insert(entityHTD);
   }
 
   public void delegate(String userId) {
@@ -672,13 +644,18 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     return delegationState;
   }
   public void setDelegationState(DelegationState delegationState) {
+    pcs.firePropertyChange("delegation", this.delegationState, delegationState);
     this.delegationState = delegationState;
   }
   public String getDelegationStateString() {
     return (delegationState!=null ? delegationState.toString() : null);
   }
-  public void setDelegationStateString(String delegationStateString) {
-    this.delegationState = (delegationStateString!=null ? DelegationState.valueOf(DelegationState.class, delegationStateString) : null);
+  public void setDelegationStateString(String delegationState) {
+    if (delegationState == null) {
+      setDelegationState(null);
+    } else {
+      setDelegationState(DelegationState.valueOf(DelegationState.class, delegationState));
+    }
   }
   public boolean isDeleted() {
     return isDeleted;
@@ -730,4 +707,20 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
     }
   }
 
+  public void propertyChange(PropertyChangeEvent evt) {
+    propertyChanges.put(evt.getPropertyName(), evt.getNewValue());
+  }
+
+  public Map<String, Object> getPropertyChanges() {
+    return propertyChanges;
+  }
+
+  public void createHistoricTaskDetails(String operation) {
+    CommandContext commandContext = Context.getCommandContext();
+    if (commandContext != null) {
+      String userId = commandContext.getAuthenticatedUserId();
+      commandContext.getHistoricTaskDetailManager().createHistoricTaskDetails(userId, operation, this, propertyChanges);
+      propertyChanges = new HashMap<String, Object>(); // reset changes
+    }
+  }
 }

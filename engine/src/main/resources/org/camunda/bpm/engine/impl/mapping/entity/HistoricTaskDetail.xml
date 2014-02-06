@@ -48,6 +48,16 @@
       )
   </insert>
 
+  <!-- HISTORIC TASK DETAIL DELETE -->
+
+  <delete id="deleteHistoricTaskDetailsByProcessInstanceId">
+    delete from ${prefix}ACT_HI_TASK_DETAIL where PROC_INST_ID_ = #{id}
+  </delete>
+
+  <delete id="deleteHistoricTaskDetailsByTaskId">
+    delete from ${prefix}ACT_HI_TASK_DETAIL where TASK_ID_ = #{id}
+  </delete>
+
   <!-- HISTORIC TASK DETAIL RESULT MAP -->
 
   <resultMap id="historicTaskDetailResultMap" type="org.camunda.bpm.engine.impl.persistence.entity.HistoricTaskDetailEntity">

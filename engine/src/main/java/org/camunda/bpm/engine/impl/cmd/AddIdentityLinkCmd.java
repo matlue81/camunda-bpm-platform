@@ -40,6 +40,8 @@ public class AddIdentityLinkCmd implements Command<Void>, Serializable {
 
   protected String taskId;
 
+  protected TaskEntity task;
+
   public AddIdentityLinkCmd(String taskId, String userId, String groupId, String type) {
     validateParams(userId, groupId, type, taskId);
     this.taskId = taskId;
@@ -76,7 +78,7 @@ public class AddIdentityLinkCmd implements Command<Void>, Serializable {
       throw new ProcessEngineException("taskId is null");
     }
 
-    TaskEntity task = commandContext
+    task = commandContext
       .getTaskManager()
       .findTaskById(taskId);
 

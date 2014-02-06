@@ -56,4 +56,12 @@ public class HistoricTaskDetailManager extends AbstractHistoricManager {
       }
     }
   }
+
+  public void deleteHistoricTaskDetailsByProcessInstanceId(String historicProcessInstanceId) {
+    Context.getCommandContext().getDbSqlSession().delete("deleteHistoricTaskDetailsByProcessInstanceId", historicProcessInstanceId);
+  }
+
+  public void deleteHistoricTaskDetailsByTaskId(String taskId) {
+    Context.getCommandContext().getDbSqlSession().delete("deleteHistoricTaskDetailsByTaskId", taskId);
+  }
 }

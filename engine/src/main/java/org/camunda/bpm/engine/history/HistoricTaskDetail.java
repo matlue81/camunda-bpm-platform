@@ -23,6 +23,16 @@ import java.util.Date;
  */
 public interface HistoricTaskDetail {
 
+  public static String OPERATION_TYPE_ASSIGN = "assign";
+  public static String OPERATION_TYPE_CLAIM = "claim";
+  public static String OPERATION_TYPE_COMPLETE = "complete";
+  public static String OPERATION_TYPE_CREATE = "create";
+  public static String OPERATION_TYPE_DELEGATE = "delegate";
+  public static String OPERATION_TYPE_DELETE = "delete";
+  public static String OPERATION_TYPE_RESOLVE = "resolve";
+  public static String OPERATION_TYPE_SET_OWNER = "set owner";
+  public static String OPERATION_TYPE_UPDATE = "update";
+
   /** The unique identifier of this historic task detail. */
   String getId();
 

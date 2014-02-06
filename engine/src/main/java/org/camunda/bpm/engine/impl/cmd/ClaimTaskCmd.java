@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.TaskAlreadyClaimedException;
+import org.camunda.bpm.engine.history.HistoricTaskDetail;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
@@ -64,7 +65,7 @@ public class ClaimTaskCmd implements Command<Void>, Serializable {
       task.setAssignee(null);
     }
 
-//    task.createTaskDetailHistory("claim");
+    task.createHistoricTaskDetails(HistoricTaskDetail.OPERATION_TYPE_CLAIM);
 
     return null;
   }

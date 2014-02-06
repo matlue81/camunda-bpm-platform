@@ -23,6 +23,7 @@ import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.impl.cmd.AddCommentCmd;
 import org.camunda.bpm.engine.impl.cmd.AddIdentityLinkCmd;
+import org.camunda.bpm.engine.impl.cmd.AssignTaskCmd;
 import org.camunda.bpm.engine.impl.cmd.ClaimTaskCmd;
 import org.camunda.bpm.engine.impl.cmd.CompleteTaskCmd;
 import org.camunda.bpm.engine.impl.cmd.CreateAttachmentCmd;
@@ -45,6 +46,7 @@ import org.camunda.bpm.engine.impl.cmd.RemoveTaskVariablesCmd;
 import org.camunda.bpm.engine.impl.cmd.ResolveTaskCmd;
 import org.camunda.bpm.engine.impl.cmd.SaveAttachmentCmd;
 import org.camunda.bpm.engine.impl.cmd.SaveTaskCmd;
+import org.camunda.bpm.engine.impl.cmd.SetTaskOwnerCmd;
 import org.camunda.bpm.engine.impl.cmd.SetTaskPriorityCmd;
 import org.camunda.bpm.engine.impl.cmd.SetTaskVariablesCmd;
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
@@ -103,11 +105,11 @@ public class TaskServiceImpl extends ServiceImpl implements TaskService {
   }
 
   public void setAssignee(String taskId, String userId) {
-    commandExecutor.execute(new AddIdentityLinkCmd(taskId, userId, null, IdentityLinkType.ASSIGNEE));
+    commandExecutor.execute(new AssignTaskCmd(taskId, userId));
   }
   
   public void setOwner(String taskId, String userId) {
-    commandExecutor.execute(new AddIdentityLinkCmd(taskId, userId, null, IdentityLinkType.OWNER));
+    commandExecutor.execute(new SetTaskOwnerCmd(taskId, userId));
   }
   
   public void addCandidateUser(String taskId, String userId) {
@@ -147,8 +149,7 @@ public class TaskServiceImpl extends ServiceImpl implements TaskService {
   }
   
   public void claim(String taskId, String userId) {
-    ClaimTaskCmd cmd = new ClaimTaskCmd(taskId, userId);
-    commandExecutor.execute(cmd);
+    commandExecutor.execute(new ClaimTaskCmd(taskId, userId));
   }
 
   public void complete(String taskId) {

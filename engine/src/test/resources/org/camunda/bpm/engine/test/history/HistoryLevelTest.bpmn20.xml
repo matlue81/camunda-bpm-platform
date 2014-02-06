@@ -7,21 +7,9 @@
   <process id="HistoryLevelTest" name="The history checker process.">
 
     <startEvent id="start"/>
-    <sequenceFlow id="flow1" sourceRef="start" targetRef="init"/>
-    <scriptTask id="init" scriptFormat="groovy">
-      <script>
-        execution.setVariable("myVar", "foo")
-      </script>
-    </scriptTask>
-    <sequenceFlow id="flow2" sourceRef="init" targetRef="task"/>
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="task"/>
     <userTask id="task" name="a task"/>
-    <sequenceFlow id="flow3" sourceRef="task" targetRef="leave"/>
-    <scriptTask id="leave" scriptFormat="groovy">
-      <script>
-        execution.setVariable("myVar", "bar")
-      </script>
-    </scriptTask>
-    <sequenceFlow id="flow4" sourceRef="leave" targetRef="theEnd"/>
+    <sequenceFlow id="flow2" sourceRef="task" targetRef="theEnd"/>
     <endEvent id="theEnd"/>
 
   </process>

@@ -20,6 +20,7 @@ import java.util.List;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.delegate.Expression;
 import org.camunda.bpm.engine.delegate.TaskListener;
+import org.camunda.bpm.engine.history.HistoricTaskDetail;
 import org.camunda.bpm.engine.impl.calendar.BusinessCalendar;
 import org.camunda.bpm.engine.impl.calendar.DueDateBusinessCalendar;
 import org.camunda.bpm.engine.impl.context.Context;
@@ -100,7 +101,7 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
       .getHistoricTaskInstanceManager()
       .createHistoricTask(task);
 
-    task.createTaskDetailHistory("create");
+    task.createHistoricTaskDetails(HistoricTaskDetail.OPERATION_TYPE_CREATE);
 
     // All properties set, now firing 'create' event
     task.fireEvent(TaskListener.EVENTNAME_CREATE);

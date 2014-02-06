@@ -22,7 +22,7 @@ import static org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl.*;
 /**
  * @author Danny Gräf
  */
-public class HistoryLevelTest extends PluggableProcessEngineTestCase {
+public abstract class HistoryLevelTest extends PluggableProcessEngineTestCase {
 
   private ProcessInstance startProcessAndCompleteUserTask() {
     ProcessInstance process = runtimeService.startProcessInstanceByKey("HistoryLevelTest");
