@@ -4,7 +4,21 @@ define(['angular'], function(angular) {
 
   var module = angular.module('cockpit.pages');
 
-  var Controller = ['$scope', '$rootScope', 'Views', 'Data', 'dataDepend', function ($scope, $rootScope, Views, Data, dataDepend) {
+  var Controller = [
+    '$scope',
+    '$rootScope',
+    'Views',
+    'Data',
+    'dataDepend',
+    'breadcrumbs',
+  function (
+    $scope,
+    $rootScope,
+    Views,
+    Data,
+    dataDepend,
+    breadcrumbs
+  ) {
 
     var processData = $scope.processData = dataDepend.create($scope);
 
@@ -13,14 +27,8 @@ define(['angular'], function(angular) {
 
     Data.instantiateProviders('cockpit.dashboard.data', {$scope: $scope, processData : processData});
 
-    // reset breadcrumbs
-    $rootScope.clearBreadcrumbs();
-
-    // set the page title
-    // $rootScope.pageTitle = [
-    //   'camunda Cockpit',
-    //   'Dashboard'
-    // ].join(' | ');
+    breadcrumbs.clear();
+    
     $rootScope.page.title = [
       'camunda Cockpit',
       'Dashboard'
