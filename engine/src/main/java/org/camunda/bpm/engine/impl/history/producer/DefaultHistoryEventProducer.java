@@ -356,7 +356,11 @@ public class DefaultHistoryEventProducer implements HistoryEventProducer {
     evt.setOperationId(operationId);
     evt.setOperationType(operation);
     evt.setProperty(property);
-    evt.setValue(value.toString());
+    if (value == null) {
+      evt.setValue(null);
+    } else {
+      evt.setValue(value.toString());
+    }
     return evt;
   }
 
